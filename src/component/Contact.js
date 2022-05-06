@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react'; 
+import { useState,useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -13,7 +14,77 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+
+
+
 export default function Contact() {
+
+  const [userData,setUserdata]= useState({uname:"",umobile:"",uemail:"",umessage:""});
+    
+
+    
+  const contactData=async()=>{
+    try {
+      const res = await fetch('/getData',{
+          method:"get",
+          headers:{
+            "content-Type":"application/json"
+          },
+      })
+
+      const data = await res.json();
+      setUserdata({...userData,uname:data.uname,uemail:data.uemail,umobile:data.umobile});
+
+       if(!res.status===200){
+         const error=new Error(res.error);
+            throw error;
+         }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+    useEffect(() => {
+       contactData();
+    
+    },[])
+
+   const handelinput=(e)=>{
+ const name=e.target.name;
+ const value=e.target.value;
+      setUserdata({...userData,[name]:value})
+
+   }
+
+
+   const handelform= async (e)=>{
+     e.preventDefault();
+    const {uname,uemail,umobile,umessage}=userData;
+    console.log(umessage)
+
+    const res =await  fetch('/contact',{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body: JSON.stringify({
+        uname,uemail,umessage,umobile
+      })
+    })
+      const data= await res.json();
+if(!data){
+  alert("no message send")
+  console.log("Message not sent");
+}else{
+  alert("Message sent suceesfully")
+  setUserdata({...userData,umessage:""});
+}
+
+     
+   }
+
+
   return (
     <Container >
           <Box sx={{ width: '100%' ,my:4 }}>
@@ -37,14 +108,26 @@ export default function Contact() {
       </Grid>
       <Paper sx={{p:2,my:6,width:"80%",ml:8}} elevation={4}>
         <Typography variant="h3" fontFamily="sans-serif">Get in Touch</Typography>
-              <TextField variant="outlined" placeholder='Full Name' sx={{mx:2,my:4}}/>
-              <TextField variant="outlined" placeholder='Email id'sx={{mx:2,my:4}}/>
-              <TextField variant="outlined" placeholder='Phone number' sx={{mx:2,my:4}}/>
+              <TextField variant="outlined" placeholder='Full Name' sx={{mx:2,my:4}} 
+             name="uname" 
+              value={userData.uname}
+              onChange={handelinput}/>
+              <TextField variant="outlined" placeholder='Email id'sx={{mx:2,my:4}}
+             name="uemail" 
+              value={userData.uemail}
+              onChange={handelinput}/>
+              <TextField variant="outlined" placeholder='Phone number' sx={{mx:2,my:4}} 
+             name="uphone"
+              value={userData.umobile}
+              onChange={handelinput}/>
               <TextField variant="outlined" 
+               name="umessage"
+               onChange={handelinput}
+
               rows={6}
               multiline fullWidth placeholder='Describe For Contacting us' sx={{my:2,mb:4}}/>
         
-        <Button variant='contained' sx={{ml:4,mb:4}}>Send Message</Button>
+        <Button  variant='contained' onClick={handelform} sx={{ml:4,mb:4}}>Send Message</Button>
 
 
       </Paper>
