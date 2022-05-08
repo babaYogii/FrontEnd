@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React,{useContext} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -12,18 +12,20 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import {Link} from 'react-router-dom'
+import { Usercontext } from '../App';
 
 
 
 
 
-const pages = [ 'home','about', 'contact','Register','login' ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = () => {
+  const {state,dispatch}=useContext(Usercontext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const pages = state?['home','about', 'contact','logout']: [ 'home','about', 'contact','Register','login','logout' ];
+ 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };

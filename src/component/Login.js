@@ -1,8 +1,13 @@
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
 import { Grid, Container,TextField, Button } from '@mui/material'
 import {useNavigate}from 'react-router-dom'
+import {Usercontext} from '../App'
+
 
 const Login = () => {
+
+
+  const  {state,dispatch}= useContext(Usercontext)
   const navigate=useNavigate();
   const [uemail, setEmail] = useState("");
   const [upassword,setPassword]=useState("");
@@ -32,7 +37,7 @@ const loginuser= async (e)=>{
       window.alert('Invalid credentials');
       
     }else{
-      console.log(res.status);
+     dispatch({type:"USER",payload:true})
       window.alert("Login successful");
       navigate('/home');
     }
